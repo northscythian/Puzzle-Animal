@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Пушистые строители: Компания мечты</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#102a35;color:#fff7de;font:20px sans-serif;overscroll-behavior:none;touch-action:none;user-select:none}canvas{display:block;width:100%;height:100%}#status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;background:#102a35}button{padding:16px;background:#ffd166;border:0;border-radius:12px;font:inherit;margin:20px}</style>
+<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
+<script>window.FURRY_STANDALONE = true;</script><script src="platform.js"></script>
+</head><body><canvas id="canvas" tabindex="0"></canvas><div id="status">Пушистые строители<br>Готовим мастерскую…</div>
+<div id="rotate" style="display:none;position:fixed;inset:0;z-index:10;background:#102a35;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box">Поверните телефон горизонтально.<br>Игра продолжится после поворота.</div>
+<script src="index.js"></script><script>
+const rotate = document.getElementById('rotate');
+function updateOrientation() {
+  const portrait = (matchMedia('(pointer: coarse)').matches || innerWidth < 600) && innerHeight > innerWidth;
+  rotate.style.display = portrait ? 'flex' : 'none';
+  furryPlatform.setOrientationBlocked(portrait);
+}
+addEventListener('resize', updateOrientation);
+updateOrientation();
+document.documentElement.style.webkitUserSelect = 'none';
+document.documentElement.style.webkitTouchCallout = 'none';
+document.getElementById('canvas').addEventListener('pointerdown', () => {
+  if (matchMedia('(pointer: coarse)').matches && !document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.().catch(() => {});
+  }
+});
+const engine = new Engine({"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":43923764,"index.wasm":39513091},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4});
+furryPlatform.exit = () => {
+  engine.requestQuit();
+  document.getElementById('canvas').style.display = 'none';
+  const status = document.getElementById('status');
+  status.replaceChildren();
+  status.style.display = 'flex';
+  const message = document.createElement('div');
+  message.textContent = 'Игра завершена. Прогресс сохранён. Теперь можно закрыть эту вкладку.';
+  status.append(message);
+  const restart = document.createElement('button');
+  restart.textContent = 'Запустить игру снова';
+  restart.onclick = () => location.reload();
+  status.append(restart);
+};
+(async () => {
+  await furryPlatform.boot();
+  if (furryPlatform.status === 'sdk-error') throw new Error('Не удалось подключиться к платформе.');
+  await engine.startGame({canvas: document.getElementById('canvas'), onProgress: (current,total) => {
+    document.getElementById('status').textContent = 'Готовим мастерскую… ' + (total ? Math.floor(current/total*100) + '%' : '');
+  }});
+  document.getElementById('status').style.display = 'none';
+  document.getElementById('canvas').focus();
+})().catch(() => {
+  const status = document.getElementById('status');
+  status.textContent = 'Не удалось загрузить игру. Проверьте соединение и попробуйте ещё раз.';
+  const retry = document.createElement('button'); retry.textContent = 'Повторить'; retry.onclick = () => location.reload(); status.append(retry);
+});
+</script></body></html>
+
