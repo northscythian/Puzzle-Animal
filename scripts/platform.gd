@@ -22,10 +22,11 @@ func _ready() -> void:
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.add_child(center)
-	var text := Label.new()
-	text.text = "Пауза • вернитесь в игру для продолжения"
-	text.add_theme_font_size_override("font_size", 24)
-	center.add_child(text)
+	var resume := Button.new()
+	resume.text = "Пауза • нажмите, чтобы продолжить"
+	resume.add_theme_font_size_override("font_size", 24)
+	resume.pressed.connect(func(): bridge.resumeFromInput())
+	center.add_child(resume)
 
 func _process(_delta: float) -> void:
 	if bridge == null: return

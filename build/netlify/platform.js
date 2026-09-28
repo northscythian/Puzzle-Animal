@@ -21,6 +21,10 @@
       if (sdk && !readySent) { sdk.features.LoadingAPI.ready(); readySent = true; }
     },
     setGameplay(value) { gameplay = !!value; updatePause(); },
+    resumeFromInput() {
+      if (!document.hidden) focused = true;
+      updatePause();
+    },
     setOrientationBlocked(value) { api.orientationBlocked = !!value; updatePause(); },
     rewarded() {
       api.reward = false;
@@ -47,7 +51,13 @@
       if (events) active ? events.start() : events.stop();
     }
   }
-  document.addEventListener('visibilitychange', updatePause);
+  document.addEventListener('visibilitychange', () => {
+    focused = document.hasFocus();
+    updatePause();
+  });
+  window.addEventListener('pageshow', () => { focused = document.hasFocus(); updatePause(); });
+  document.addEventListener('pointerdown', api.resumeFromInput, true);
+  document.addEventListener('keydown', api.resumeFromInput, true);
   window.addEventListener('blur', () => { focused = false; updatePause(); });
   window.addEventListener('focus', () => { focused = true; updatePause(); });
   document.addEventListener('contextmenu', e => e.preventDefault());

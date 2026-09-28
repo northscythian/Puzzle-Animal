@@ -23,6 +23,7 @@ func _ready() -> void:
 	transition_stream = create_tone([246.94, 369.99], 0.20, 0.11, 8.0)
 	if can_play:
 		music_player = AudioStreamPlayer.new()
+		music_player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 		music_player.bus = "Music"
 		var looped_music := MUSIC_STREAM.duplicate() as AudioStreamMP3
 		looped_music.loop = true
@@ -64,6 +65,7 @@ func play_stream(stream: AudioStreamWAV) -> void:
 	if not can_play or stream == null:
 		return
 	var player := AudioStreamPlayer.new()
+	player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 	player.bus = "SFX"
 	player.stream = stream
 	add_child(player)

@@ -39,6 +39,14 @@ async function scenario(mode) {
   assert.equal(cloudSave.furrySave.content,api.load());
   handlers.blur(); assert.equal(api.blocked,true);
   handlers.focus(); assert.equal(api.blocked,false);
+  handlers.blur(); handlers.pointerdown(); assert.equal(api.blocked,false);
+  handlers.blur(); handlers.visibilitychange(); assert.equal(api.blocked,false);
+  context.document.hidden = true;
+  handlers.visibilitychange(); handlers.pointerdown(); assert.equal(api.blocked,true);
+  context.document.hidden = false;
+  handlers.pageshow(); assert.equal(api.blocked,false);
+  handlers.game_api_pause(); handlers.pointerdown(); assert.equal(api.blocked,true);
+  handlers.game_api_resume(); assert.equal(api.blocked,false);
   handlers.game_api_pause(); handlers.blur(); handlers.game_api_resume();
   assert.equal(api.blocked,true); handlers.focus(); assert.equal(api.blocked,false);
   api.rewarded(); assert.equal(api.adPending,false);
