@@ -1,0 +1,12 @@
+.godot/
+preview/
+build/
+export_templates/
+.env
+.env.*
+!.env.example
+*.log
+# Original duplicate; the game uses assets/audio/foxglove_workshop.mp3.
+/Foxglove Workshop.mp3
+/Foxglove Workshop.mp3.import
+
